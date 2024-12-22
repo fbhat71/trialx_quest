@@ -1,0 +1,43 @@
+{% extends 'game/base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-2xl font-bold mb-6">Story Mode</h1>
+        
+        <div class="space-y-6">
+            {% for chapter in chapters %}
+            <div class="border rounded-lg p-4 {% if not chapter.is_available %}opacity-50{% endif %}">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-xl font-bold">Chapter {{ chapter.order }}: {{ chapter.title }}</h2>
+                    {% if chapter.progress.completed %}
+                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded">Completed</span>
+                    {% elif chapter.is_available %}
+                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded">Available</span>
+                    {% else %}
+                    <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded">Locked</span>
+                    {% endif %}
+                </div>
+                
+                <p class="text-gray-600 mb-4">{{ chapter.description }}</p>
+                
+                <div class="text-sm text-gray-500">
+                    Required Level: {{ chapter.required_level }}
+                    <br>
+                    Required Reputation: {{ chapter.required_reputation }}
+                </div>
+                
+                {% if chapter.is_available %}
+                <div class="mt-4">
+                    <a href="{% url 'chapter_detail' chapter.id %}" 
+                       class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                        {% if chapter.progress %}Continue Chapter{% else %}Start Chapter{% endif %}
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

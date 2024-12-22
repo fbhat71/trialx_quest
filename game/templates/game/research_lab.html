@@ -1,0 +1,55 @@
+{% extends 'game/base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">Research Laboratory</h1>
+            <div class="text-lg">
+                Research Points: <span class="font-bold text-blue-600">{{ player.research_points }}</span>
+                <br>
+                Research Multiplier: <span class="font-bold text-green-600">x{{ player.research_multiplier }}</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for upgrade in available_upgrades %}
+            <div class="border rounded-lg p-4 {% if upgrade.is_purchased %}bg-gray-50{% endif %}">
+                <h3 class="font-bold text-lg mb-2">{{ upgrade.name }}</h3>
+                <p class="text-gray-600 mb-4">{{ upgrade.description }}</p>
+                
+                <div class="space-y-1 text-sm mb-4">
+                    {% if upgrade.multiplier_bonus %}
+                    <p>Research Multiplier: +{{ upgrade.multiplier_bonus }}x</p>
+                    {% endif %}
+                    {% if upgrade.recruitment_bonus %}
+                    <p>Recruitment Bonus: +{{ upgrade.recruitment_bonus }}</p>
+                    {% endif %}
+                    {% if upgrade.analysis_bonus %}
+                    <p>Analysis Bonus: +{{ upgrade.analysis_bonus }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <span class="font-bold">Cost: {{ upgrade.cost }} RP</span>
+                    {% if upgrade.is_purchased %}
+                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded">Purchased</span>
+                    {% else %}
+                    <form method="POST" class="inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="upgrade_id" value="{{ upgrade.id }}">
+                        <button type="submit" 
+                                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 
+                                       {% if player.research_points < upgrade.cost %}opacity-50 cursor-not-allowed{% endif %}"
+                                {% if player.research_points < upgrade.cost %}disabled{% endif %}>
+                            Purchase
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,57 @@
+{% extends 'game/base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8">Choose Your Hero</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for character in characters %}
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="p-6">
+                    <h2 class="text-xl font-bold mb-2">{{ character.name }}</h2>
+                    <span class="inline-block px-2 py-1 text-sm rounded bg-blue-100 text-blue-800 mb-4">
+                        {{ character.get_character_type_display }}
+                    </span>
+                    
+                    <p class="text-gray-600 mb-4">{{ character.ability_description }}</p>
+                    
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between">
+                            <span>Recruitment</span>
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" 
+                                     style="width: {{ character.recruitment_bonus }}%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Data Analysis</span>
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-600 h-2 rounded-full" 
+                                     style="width: {{ character.data_analysis_bonus }}%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Patient Care</span>
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div class="bg-purple-600 h-2 rounded-full" 
+                                     style="width: {{ character.patient_care_bonus }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="character_id" value="{{ character.id }}">
+                        <button type="submit" 
+                                class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                            Select {{ character.get_character_type_display }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

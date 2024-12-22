@@ -1,0 +1,47 @@
+{% extends 'game/base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8">Achievements</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for achievement in achievements %}
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        {% if achievement.is_earned %}
+                        <img src="{{ achievement.icon.url }}" alt="{{ achievement.name }}" 
+                             class="w-12 h-12 rounded-full">
+                        {% else %}
+                        <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </div>
+                        {% endif %}
+                        <div class="ml-4">
+                            <h2 class="font-bold">{{ achievement.name }}</h2>
+                            <span class="text-sm text-gray-500">{{ achievement.points }} points</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-600 mb-4">{{ achievement.description }}</p>
+                    
+                    {% if not achievement.is_earned %}
+                    <div class="mt-4">
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" 
+                                 style="width: {{ achievement.progress }}%"></div>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">Progress: {{ achievement.progress|floatformat:0 }}%</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

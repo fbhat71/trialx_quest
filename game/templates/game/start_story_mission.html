@@ -1,0 +1,51 @@
+{% extends 'game/base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">{{ mission.title }}</h1>
+        
+        <div class="space-y-6">
+            <div>
+                <h2 class="font-bold text-lg mb-2">Mission Brief</h2>
+                <p class="text-gray-600">{{ mission.description }}</p>
+            </div>
+            
+            <div class="bg-blue-50 p-4 rounded">
+                <h2 class="font-bold text-lg mb-2">Objectives</h2>
+                <ul class="list-disc list-inside space-y-2">
+                    <li>Recruit {{ mission.target_participants }} participants</li>
+                    <li>Achieve {{ mission.min_success_rate }}% success rate</li>
+                    <li>Complete the trial within budget</li>
+                </ul>
+            </div>
+            
+            <div class="bg-green-50 p-4 rounded">
+                <h2 class="font-bold text-lg mb-2">Rewards</h2>
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <span class="block font-bold text-green-700">{{ mission.reward_xp }}</span>
+                        <span class="text-sm text-gray-600">Experience Points</span>
+                    </div>
+                    <div>
+                        <span class="block font-bold text-blue-700">{{ mission.reward_reputation }}</span>
+                        <span class="text-sm text-gray-600">Reputation</span>
+                    </div>
+                    <div>
+                        <span class="block font-bold text-purple-700">{{ mission.reward_research_points }}</span>
+                        <span class="text-sm text-gray-600">Research Points</span>
+                    </div>
+                </div>
+            </div>
+            
+            <form method="POST" class="mt-8">
+                {% csrf_token %}
+                <button type="submit" 
+                        class="w-full bg-green-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-600">
+                    Begin Mission
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

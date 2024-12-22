@@ -1,0 +1,44 @@
+{% extends 'game/base.html' %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="bg-white p-4 rounded shadow">
+        <h2 class="text-xl font-bold mb-4">Active Trials</h2>
+        {% for trial in active_trials %}
+        <div class="border p-4 mb-2 rounded">
+            <h3 class="font-bold">{{ trial.name }}</h3>
+            <p>Status: {{ trial.get_status_display }}</p>
+            <p>Participants: {{ trial.current_participants }}/{{ trial.target_participants }}</p>
+            <div class="mt-2">
+                <a href="{% url 'recruit_participants' trial.id %}" 
+                   class="bg-blue-500 text-white px-4 py-2 rounded">
+                    Manage Trial
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <p>No active trials. Start a new one!</p>
+        {% endfor %}
+        
+        <a href="{% url 'start_trial' %}" 
+           class="block mt-4 bg-green-500 text-white px-4 py-2 rounded text-center">
+            Start New Trial
+        </a>
+    </div>
+    
+    <div class="bg-white p-4 rounded shadow">
+        <h2 class="text-xl font-bold mb-4">Your Character</h2>
+        <div class="mb-4">
+            <p>Type: {{ profile.character.get_character_type_display }}</p>
+            <p>{{ profile.character.ability_description }}</p>
+        </div>
+        
+        <h3 class="font-bold mb-2">Stats</h3>
+        <ul>
+            <li>Recruitment Bonus: +{{ profile.character.recruitment_bonus }}</li>
+            <li>Data Analysis: +{{ profile.character.data_analysis_bonus }}</li>
+            <li>Patient Care: +{{ profile.character.patient_care_bonus }}</li>
+        </ul>
+    </div>
+</div>
+{% endblock %} 

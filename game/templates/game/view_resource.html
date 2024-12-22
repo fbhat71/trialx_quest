@@ -1,0 +1,45 @@
+{% extends 'game/base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-6">
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold">{{ resource.title }}</h1>
+            <span class="inline-block px-2 py-1 text-sm rounded bg-blue-100 text-blue-800 mt-2">
+                {{ resource.get_resource_type_display }}
+            </span>
+        </div>
+        
+        {% if resource.resource_type == 'VIDEO' %}
+        <div class="aspect-w-16 aspect-h-9 mb-6">
+            <iframe src="{{ resource.url }}" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen
+                    class="w-full h-full rounded"></iframe>
+        </div>
+        {% endif %}
+        
+        <div class="prose max-w-none">
+            {{ resource.content|safe }}
+        </div>
+        
+        {% if resource.url %}
+        <div class="mt-6">
+            <a href="{{ resource.url }}" 
+               target="_blank"
+               class="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                View Original Resource
+            </a>
+        </div>
+        {% endif %}
+        
+        <div class="mt-8 border-t pt-4">
+            <a href="{% url 'resources' %}" 
+               class="text-blue-500 hover:text-blue-700">
+                ← Back to Resources
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

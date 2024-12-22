@@ -1,0 +1,101 @@
+{% extends 'game/base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">Recruitment Puzzle</h1>
+            <span class="px-3 py-1 rounded bg-blue-100 text-blue-800">
+                Level {{ puzzle.difficulty }}
+            </span>
+        </div>
+
+        {% if puzzle %}
+        <div class="space-y-6">
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <span class="text-sm font-medium text-gray-500">{{ puzzle.get_puzzle_type_display }}</span>
+                <p class="text-lg mt-2">{{ puzzle.question }}</p>
+            </div>
+
+            {% if puzzle.puzzle_type == 'MATCH' %}
+            <div class="grid grid-cols-2 gap-4">
+                {% for option in puzzle.puzzleoption_set.all %}
+                <button onclick="submitAnswer('{{ option.text }}')"
+                        class="p-4 border rounded-lg hover:bg-blue-50 transition-colors">
+                    {{ option.text }}
+                </button>
+                {% endfor %}
+            </div>
+            {% else %}
+            <form id="puzzleForm" class="space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="puzzle_id" value="{{ puzzle.id }}">
+                <textarea name="answer" rows="3" required
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                          placeholder="Enter your answer..."></textarea>
+                <button type="submit"
+                        class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Submit Answer
+                </button>
+            </form>
+            {% endif %}
+
+            <div id="feedback" class="hidden p-4 rounded-lg"></div>
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+            <p class="text-gray-600">No more puzzles available at the moment.</p>
+            <a href="{% url 'trial_detail' trial.id %}" 
+               class="inline-block mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                Return to Trial
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function submitAnswer(answer) {
+    const formData = new FormData();
+    formData.append('answer', answer);
+    formData.append('puzzle_id', '{{ puzzle.id }}');
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    
+    submitPuzzleAnswer(formData);
+}
+
+document.getElementById('puzzleForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    submitPuzzleAnswer(new FormData(this));
+});
+
+function submitPuzzleAnswer(formData) {
+    fetch(window.location.href, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        const feedback = document.getElementById('feedback');
+        feedback.classList.remove('hidden');
+        
+        if (data.success) {
+            feedback.className = 'p-4 rounded-lg bg-green-100 text-green-800';
+            feedback.innerHTML = `
+                <p class="font-bold">Success!</p>
+                <p>${data.message}</p>
+                <p class="mt-2">+${data.points} XP</p>
+            `;
+            
+            // Reload after delay if participant recruited
+            if (data.message.includes('recruited')) {
+                setTimeout(() => window.location.reload(), 2000);
+            }
+        } else {
+            feedback.className = 'p-4 rounded-lg bg-red-100 text-red-800';
+            feedback.innerHTML = `<p>${data.message}</p>`;
+        }
+    });
+}
+</script>
+{% endblock %} 

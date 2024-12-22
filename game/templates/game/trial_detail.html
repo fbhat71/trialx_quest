@@ -1,0 +1,79 @@
+{% extends 'game/base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">{{ trial.name }}</h1>
+            <span class="px-4 py-2 rounded 
+                {% if trial.status == 'COMPLETED' %}bg-green-100 text-green-800
+                {% elif trial.status == 'FAILED' %}bg-red-100 text-red-800
+                {% else %}bg-blue-100 text-blue-800{% endif %}">
+                {{ trial.get_status_display }}
+            </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div class="border p-4 rounded">
+                    <h3 class="font-bold mb-2">Trial Progress</h3>
+                    <div class="space-y-2">
+                        <p>Participants: {{ trial.current_participants }}/{{ trial.target_participants }}</p>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div class="bg-blue-600 h-2.5 rounded-full" 
+                                 style="width: {% widthratio trial.current_participants trial.target_participants 100 %}%">
+                            </div>
+                        </div>
+                        
+                        <p>Budget Remaining: ${{ trial.budget_allocated }}</p>
+                        <p>Success Rate: {{ trial.success_rate }}%</p>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div class="bg-green-600 h-2.5 rounded-full" 
+                                 style="width: {{ trial.success_rate }}%">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if trial.status == 'RECRUITING' %}
+                <div class="space-y-2">
+                    <a href="{% url 'recruit_participants' trial.id %}" 
+                       class="block w-full text-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        Direct Recruitment
+                    </a>
+                    <a href="{% url 'recruitment_puzzle' trial.id %}" 
+                       class="block w-full text-center bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                        Solve Puzzle to Recruit
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if trial.status == 'ONGOING' %}
+                <form method="POST" class="space-y-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="analyze_data">
+                    <button type="submit" 
+                            class="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                        Analyze Trial Data
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+
+            <div class="border p-4 rounded">
+                <h3 class="font-bold mb-4">Participants</h3>
+                <div class="space-y-2">
+                    {% for participant in trial.participant_set.all %}
+                    <div class="flex justify-between items-center p-2 {% cycle 'bg-gray-50' '' %}">
+                        <span>{{ participant.name }} ({{ participant.age }})</span>
+                        <span class="text-sm text-gray-600">{{ participant.condition }}</span>
+                    </div>
+                    {% empty %}
+                    <p class="text-gray-500">No participants yet</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

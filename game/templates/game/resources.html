@@ -1,0 +1,43 @@
+{% extends 'game/base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8">Educational Resources</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for resource in resources %}
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h2 class="font-bold text-lg">{{ resource.title }}</h2>
+                            <span class="inline-block px-2 py-1 text-sm rounded bg-blue-100 text-blue-800">
+                                {{ resource.get_resource_type_display }}
+                            </span>
+                        </div>
+                        {% if not resource.is_unlocked %}
+                        <span class="text-sm text-gray-500">
+                            Required: {{ resource.points_required }} XP
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if resource.is_unlocked %}
+                    <a href="{% url 'view_resource' resource.id %}" 
+                       class="block mt-4 bg-blue-500 text-white px-4 py-2 rounded text-center hover:bg-blue-600">
+                        View Resource
+                    </a>
+                    {% else %}
+                    <button disabled 
+                            class="block w-full mt-4 bg-gray-300 text-gray-500 px-4 py-2 rounded cursor-not-allowed">
+                        Locked
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 
